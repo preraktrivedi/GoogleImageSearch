@@ -1,10 +1,7 @@
 package codepath.preraktrivedi.apps.googlegridimagesearch.datamodel;
 
-import java.io.Serializable;
+public class SearchFilters {
 
-public class SearchFilters implements Serializable {
-
-	private static final long serialVersionUID = 763172601182287928L;
 	private String searchQuery;
 	private String websiteFilter;
 	private String colorFilter; 

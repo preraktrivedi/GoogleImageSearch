@@ -6,13 +6,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Html;
@@ -23,7 +20,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.EditText;
 import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,13 +43,17 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 
 	private static final String TAG = GoogleGridImageSearchMainActivity.class.getSimpleName();
 	private Context mContext;
-	private TextView tvSearch;
+	private TextView tvSearch, tvNotFoundText;
 	private GridView gvImages;
+	private ImageView ivNotFound;
+	private EditText etSearch;
+	private ImageButton ibSearchBtn;
+	private RelativeLayout rlResultContainer, rlErrorContainer;
 	private ArrayList<ImageResult> imageResults = new ArrayList<ImageResult>();
 	private ImageResultArrayAdapter imageAdapter;
 	private SearchFilters searchFilters;
 	private ImageSearchAppData appData;
-//	private static int REQUEST_CODE = 1, RESULT_CODE = 1;
+	//	private static int REQUEST_CODE = 1, RESULT_CODE = 1;
 	private static final String AMPERSAND = "&", EQUALS = "=", QUESTIONMARK = "?", QUERY = "q",
 			TYPE = "imgtype", SITE = "as_sitesearch", COLOR = "imgcolor",
 			SIZE = "imgsz", RSSIZE = "rsz", START = "start", VERSION = "v",
@@ -68,10 +73,15 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 	}
 
 	private void initializeUI() {
-//		ActionBar bar = getActionBar();
-//		bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5500FF")));
+		//		ActionBar bar = getActionBar();
+		//		bar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#5500FF")));
+		rlResultContainer = (RelativeLayout) findViewById(R.id.rl_result_container);
+		rlErrorContainer = (RelativeLayout) findViewById(R.id.rl_query_container);
 		tvSearch = (TextView) findViewById(R.id.tv_search_query);
 		gvImages = (GridView) findViewById(R.id.gvImages);
+		ivNotFound = (ImageView) findViewById(R.id.iv_not_found);
+		tvNotFoundText = (TextView) findViewById(R.id.tv_not_found);
+		ibSearchBtn = (ImageButton) findViewById(R.id.ib_action_done);
 		imageAdapter = new ImageResultArrayAdapter(this, imageResults);
 		gvImages.setAdapter(imageAdapter);
 		setupListeners();
@@ -115,9 +125,18 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 		case R.id.action_search:
 			Toast.makeText(mContext, "Search", Toast.LENGTH_SHORT).show();
 			return true;
+		case R.id.action_filters:
+			LayoutUtils.showToast(mContext, "Launch Filters");
+			loadFilterActivity();
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
+	}
+
+	private void loadFilterActivity() {
+		Intent i = new Intent(mContext, SearchFiltersActivity.class);
+		startActivity(i);
 	}
 
 	@Override
@@ -150,10 +169,20 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 			@Override
 			public void onSuccess(JSONObject response) {
 				try {
+					Log.d(TAG, "JSON Success result - " + response.toString()); 
 					JSONArray joArray = response.getJSONObject(RESPONSE_DATA).getJSONArray(RESULTS);
-					imageAdapter.addAll(ImageResult.fromJSONArray(joArray));
+					if (joArray.length() > 0) {
+						imageAdapter.addAll(ImageResult.fromJSONArray(joArray));
+						rlResultContainer.setVisibility(View.VISIBLE);
+						rlErrorContainer.setVisibility(View.GONE);
+					} else {
+						rlErrorContainer.setVisibility(View.VISIBLE);
+						rlResultContainer.setVisibility(View.GONE);
+					}
 				} catch (JSONException e) {
 					Log.e(TAG, "JSON Exception - " + e.toString()); 
+					rlErrorContainer.setVisibility(View.VISIBLE);
+					rlResultContainer.setVisibility(View.GONE);
 				}
 			}
 		});
@@ -161,6 +190,7 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 
 	private String buildQueryUrlFromFilters(int page) {
 		StringBuffer sb = new StringBuffer("");
+		searchFilters = getSearchFilters(); //validate latest search filters
 		if (searchFilters == null || TextUtils.isEmpty(searchFilters.getSearchQuery())) {
 			LayoutUtils.showToast(mContext, "Search Query is empty");
 			return sb.toString();
@@ -191,8 +221,10 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 		if (appData.getCurrentSearchFilters() != null) {
 			filters = appData.getCurrentSearchFilters();
 		} else {
-			filters = new SearchFilters(null, null, null, null, null);
+			filters = new SearchFilters("", "", "", "", "");
 		}
+		
+		appData.setCurrentSearchFilters(filters);
 		return filters;
 	}
 
