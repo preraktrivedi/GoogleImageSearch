@@ -4,8 +4,7 @@
         android:id="@+id/menu_item_share"
         android:actionProviderClass="android.widget.ShareActionProvider"
         android:enabled="true"
-        android:onClick="onShareItem"
-        android:showAsAction="ifRoom"
+        android:showAsAction="always"
         android:title="@string/share"/>
 
 </menu>
