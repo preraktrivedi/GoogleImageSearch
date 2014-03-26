@@ -16,9 +16,11 @@ import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.EditText;
@@ -27,7 +29,9 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
+import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
+import android.widget.TextView.OnEditorActionListener;
 import android.widget.Toast;
 import codepath.preraktrivedi.apps.googlegridimagesearch.R;
 import codepath.preraktrivedi.apps.googlegridimagesearch.adapters.ImageResultArrayAdapter;
@@ -114,18 +118,40 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 
 			@Override
 			public void onClick(View arg0) {
-				Editable editable = etSearch.getText();
-				String query = "";
-				if (editable != null) {
-					query = editable.toString();
-					if (!TextUtils.isEmpty(query)) {
-						performSearch(query);
-					}
-				} else {
+				if (validateInput()) {
+					performSearch(etSearch.getText().toString().trim());
+				}else {
 					showErrorViews(true);
 				}
 			}
 		});
+
+		etSearch.setOnEditorActionListener(new OnEditorActionListener() {        
+			@Override
+			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+				if(actionId==EditorInfo.IME_ACTION_DONE){
+					if (validateInput()) {
+						performSearch(etSearch.getText().toString().trim());
+					} else {
+						showErrorViews(true);
+					}
+				}
+				return false;
+			}
+		});
+	}
+
+	private boolean validateInput() {
+		Editable editable = etSearch.getText();
+		boolean isValidInput = false;
+		String query = "";
+		if (editable != null) {
+			query = editable.toString();
+			if (!TextUtils.isEmpty(query.trim())) {
+				isValidInput = true;
+			}
+		} 
+		return isValidInput;
 	}
 
 	@Override
@@ -144,8 +170,11 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Take appropriate action for each action item click
 		switch (item.getItemId()) {
-		case R.id.action_search:
-			Toast.makeText(mContext, "Search", Toast.LENGTH_SHORT).show();
+		case R.id.action_refresh:
+			String query = searchFilters.getSearchQuery();
+			if (!TextUtils.isEmpty(query)) {
+				performSearch(query);
+			}
 			return true;
 		case R.id.action_filters:
 			loadFilterActivity();
@@ -206,6 +235,12 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 						Log.e(TAG, "JSON Exception - " + e.toString()); 
 						showErrorViews(true);
 					}
+				}
+
+				@Override
+				public void onFailure(Throwable e, JSONObject error) {
+					showErrorViews(true);
+					LayoutUtils.showToast(mContext, "Something went wrong, please try again.");
 				}
 			});
 		} else {

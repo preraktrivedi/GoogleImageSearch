@@ -11,6 +11,7 @@
     <string name="adv_search_options">Advanced Search Option</string>
     <string name="site_filter">example.com</string>
     <string name="save">Save</string>
+    <string name="refresh">Refresh</string>
     <string name="color_prompt">Select Color</string>
     <string name="size_prompt">Select Size</string>
     <string name="type_prompt">Select Type</string>
