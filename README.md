@@ -41,7 +41,7 @@ This app is used to search images using the Google Search API with optional use 
 
 7a) Filter screen to set filters based on size, type, color or website :
 
-![Screenshots](/sampleapk/7a-FilterScreen.png "Screenshot Filter Screen")
+![Screenshots](/sampleapk/7a-FilledFilterScreen.png "Screenshot Filter Screen")
 
 7b) Refresh the filters by just one click using the action bar icon :
 
