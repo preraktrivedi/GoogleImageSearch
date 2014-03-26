@@ -22,6 +22,7 @@ import android.widget.ShareActionProvider;
 import android.widget.TextView;
 import codepath.preraktrivedi.apps.googlegridimagesearch.R;
 import codepath.preraktrivedi.apps.googlegridimagesearch.datamodel.ImageResult;
+import codepath.preraktrivedi.apps.googlegridimagesearch.datamodel.ImageSearchAppData;
 import codepath.preraktrivedi.apps.googlegridimagesearch.utils.LayoutUtils;
 
 import com.loopj.android.image.SmartImageView;
@@ -46,6 +47,7 @@ public class ImageDisplayActivity extends Activity {
 	private void initializeUi() {
 		setContentView(R.layout.activity_image_display);
 		getActionBar().setDisplayHomeAsUpEnabled(true);
+		getActionBar().setTitle(ImageSearchAppData.getInstance().getCurrentSearchFilters().getSearchQuery());
 		imageResult = (ImageResult) getIntent().getSerializableExtra(GoogleGridImageSearchMainActivity.SEARCH_RESULT_POSITION);
 		ivImage = (SmartImageView) findViewById(R.id.ivResult);
 		ivImage.setImageUrl(imageResult.getUrl());
@@ -73,6 +75,16 @@ public class ImageDisplayActivity extends Activity {
 		mShareActionProvider = (ShareActionProvider) shareItem.getActionProvider();  
 		//setShareIntent(createShareIntent());
 		return true;
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			this.finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
 	}
 
 	private Intent getShareIntent(Uri bmpUri) {  

@@ -6,11 +6,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ShareActionProvider;
 import android.widget.Spinner;
 import codepath.preraktrivedi.apps.googlegridimagesearch.R;
 import codepath.preraktrivedi.apps.googlegridimagesearch.datamodel.ImageSearchAppData;
@@ -32,10 +35,27 @@ public class SearchFiltersActivity extends Activity {
 		appData = ImageSearchAppData.getInstance();
 		searchFilters = appData.getCurrentSearchFilters();
 		setContentView(R.layout.activity_search_filters);
-		initializeView();
+		initializeUi();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.search_filters, menu);
+		return true;
 	}
 
-	private void initializeView() {
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		switch (item.getItemId()) {
+		case android.R.id.home:
+			this.finish();
+			return true;
+		}
+		return super.onOptionsItemSelected(item);
+	}
+
+	private void initializeUi() {
+		getActionBar().setDisplayHomeAsUpEnabled(true);
 		spImageSize = (Spinner) findViewById(R.id.spImageSize);
 		spImageColor = (Spinner) findViewById(R.id.spImageColor);
 		spImageType = (Spinner) findViewById(R.id.spImageType);

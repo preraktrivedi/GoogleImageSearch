@@ -12,6 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.Log;
@@ -34,6 +35,7 @@ import codepath.preraktrivedi.apps.googlegridimagesearch.datamodel.ImageResult;
 import codepath.preraktrivedi.apps.googlegridimagesearch.datamodel.ImageSearchAppData;
 import codepath.preraktrivedi.apps.googlegridimagesearch.datamodel.SearchFilters;
 import codepath.preraktrivedi.apps.googlegridimagesearch.utils.EndlessScrollListener;
+import codepath.preraktrivedi.apps.googlegridimagesearch.utils.ImageSearchUtils;
 import codepath.preraktrivedi.apps.googlegridimagesearch.utils.LayoutUtils;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -43,6 +45,7 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 
 	private static final String TAG = GoogleGridImageSearchMainActivity.class.getSimpleName();
 	private Context mContext;
+	private static boolean sIsSearchAlreadyDone = false;
 	private TextView tvSearch, tvNotFoundText;
 	private GridView gvImages;
 	private ImageView ivNotFound;
@@ -79,12 +82,14 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 		rlErrorContainer = (RelativeLayout) findViewById(R.id.rl_query_container);
 		tvSearch = (TextView) findViewById(R.id.tv_search_query);
 		gvImages = (GridView) findViewById(R.id.gvImages);
+		etSearch = (EditText) findViewById(R.id.et_search);
 		ivNotFound = (ImageView) findViewById(R.id.iv_not_found);
 		tvNotFoundText = (TextView) findViewById(R.id.tv_not_found);
 		ibSearchBtn = (ImageButton) findViewById(R.id.ib_action_done);
 		imageAdapter = new ImageResultArrayAdapter(this, imageResults);
 		gvImages.setAdapter(imageAdapter);
 		setupListeners();
+		showErrorViews(true);
 	}
 
 	private void setupListeners() {
@@ -102,6 +107,23 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 			@Override
 			public void onLoadMore(int page, int totalItemsCount) {
 				loadMoreResults(page);
+			}
+		});
+
+		ibSearchBtn.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View arg0) {
+				Editable editable = etSearch.getText();
+				String query = "";
+				if (editable != null) {
+					query = editable.toString();
+					if (!TextUtils.isEmpty(query)) {
+						performSearch(query);
+					}
+				} else {
+					showErrorViews(true);
+				}
 			}
 		});
 	}
@@ -126,7 +148,6 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 			Toast.makeText(mContext, "Search", Toast.LENGTH_SHORT).show();
 			return true;
 		case R.id.action_filters:
-			LayoutUtils.showToast(mContext, "Launch Filters");
 			loadFilterActivity();
 			return true;
 		default:
@@ -153,39 +174,62 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 	}
 
 	public void performSearch(String query) {
+		Log.d(TAG, "Perform search for query - "+ query);
+		sIsSearchAlreadyDone = true;
 		if (TextUtils.isEmpty(query)) {
 			LayoutUtils.showToast(mContext, "Please enter the query to search");
 			return;
 		}
 		imageResults.clear();
 		searchFilters.setSearchQuery(query);
-		tvSearch.setText(query);
+		tvSearch.setText("Current Search : " + query);
 		searchForImages(0);
 	}
 
 	public void searchForImages(int offset){
-		AsyncHttpClient client = new AsyncHttpClient();
-		client.get(buildQueryUrlFromFilters(offset), new JsonHttpResponseHandler() {
-			@Override
-			public void onSuccess(JSONObject response) {
-				try {
-					Log.d(TAG, "JSON Success result - " + response.toString()); 
-					JSONArray joArray = response.getJSONObject(RESPONSE_DATA).getJSONArray(RESULTS);
-					if (joArray.length() > 0) {
-						imageAdapter.addAll(ImageResult.fromJSONArray(joArray));
-						rlResultContainer.setVisibility(View.VISIBLE);
-						rlErrorContainer.setVisibility(View.GONE);
-					} else {
-						rlErrorContainer.setVisibility(View.VISIBLE);
-						rlResultContainer.setVisibility(View.GONE);
+
+		if (ImageSearchUtils.isNetworkActive(mContext)) {
+			AsyncHttpClient client = new AsyncHttpClient();
+			client.get(buildQueryUrlFromFilters(offset), new JsonHttpResponseHandler() {
+				@Override
+				public void onSuccess(JSONObject response) {
+					try {
+						Log.d(TAG, "JSON Success result - " + response.toString()); 
+						JSONArray joArray = response.getJSONObject(RESPONSE_DATA).getJSONArray(RESULTS);
+						if (joArray.length() > 0) {
+							imageAdapter.addAll(ImageResult.fromJSONArray(joArray));
+							showErrorViews(false);
+						} else {
+							showErrorViews(true);
+						}
+					} catch (JSONException e) {
+						Log.e(TAG, "JSON Exception - " + e.toString()); 
+						showErrorViews(true);
 					}
-				} catch (JSONException e) {
-					Log.e(TAG, "JSON Exception - " + e.toString()); 
-					rlErrorContainer.setVisibility(View.VISIBLE);
-					rlResultContainer.setVisibility(View.GONE);
 				}
-			}
-		});
+			});
+		} else {
+			showErrorViews(true);
+			LayoutUtils.showToast(mContext, "There seems to be a problem with your internet connection.");
+		}
+	}
+
+	private void showErrorViews(boolean show) {
+		if (show) {
+			rlErrorContainer.setVisibility(View.VISIBLE);
+			rlResultContainer.setVisibility(View.GONE);
+		} else {
+			rlResultContainer.setVisibility(View.VISIBLE);
+			rlErrorContainer.setVisibility(View.GONE);
+		}
+
+		if (!sIsSearchAlreadyDone) {
+			ivNotFound.setVisibility(View.INVISIBLE);
+			tvNotFoundText.setVisibility(View.INVISIBLE);
+		} else {
+			ivNotFound.setVisibility(View.VISIBLE);
+			tvNotFoundText.setVisibility(View.VISIBLE);
+		}
 	}
 
 	private String buildQueryUrlFromFilters(int page) {
@@ -223,7 +267,7 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 		} else {
 			filters = new SearchFilters("", "", "", "", "");
 		}
-		
+
 		appData.setCurrentSearchFilters(filters);
 		return filters;
 	}

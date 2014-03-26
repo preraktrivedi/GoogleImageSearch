@@ -2,8 +2,6 @@ package codepath.preraktrivedi.apps.googlegridimagesearch.utils;
 
 import android.content.Context;
 import android.view.Gravity;
-import android.widget.ArrayAdapter;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 public class LayoutUtils {
