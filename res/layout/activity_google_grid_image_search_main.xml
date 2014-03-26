@@ -31,9 +31,12 @@
             android:id="@+id/gvImages"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
             android:layout_marginTop="15dp"
             android:layout_alignLeft="@id/tv_search_query"
             android:layout_below="@id/tv_search_query"
+            android:listSelector="@null"
+            android:stretchMode="columnWidth"         
             android:numColumns="3" />
     </RelativeLayout>
 
