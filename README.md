@@ -9,6 +9,7 @@ This app is used to search images using the Google Search API with optional use 
 * You can even enter voice queries which works on compatible devices.
 * Set up your custom filters(like size, color, website or type) for enhancing your search results.
 * Easily reset the filters using the action bar icon.
+* More images will be loaded when you scroll to the bottom of the page.
 * Click on an item to view full resolution image.
 * You can share this full resolution image with compatible apps as shown below.
 * Interactive error messages shown as needed (No Internet Connection, No Result Found, etc).
