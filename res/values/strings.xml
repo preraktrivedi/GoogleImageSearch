@@ -5,7 +5,7 @@
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_search">Search</string>
-    <string name="error_not_found">No result found. Please try again.</string>
+    <string name="error_not_found">No result found. Please try again. If problem persists, try resetting your filters.</string>
     <string name="title_activity_image_display">ImageDisplayActivity</string>
     <string name="title_activity_search_filters">Set Search Filters</string>
     <string name="adv_search_options">Advanced Search Option</string>
@@ -15,10 +15,10 @@
     <string name="color_prompt">Select Color</string>
     <string name="size_prompt">Select Size</string>
     <string name="type_prompt">Select Type</string>
-    <string name="image_size">Size Filter</string>
-    <string name="image_color">Color Filter</string>
-    <string name="img_type">Type Filter</string>
-    <string name="img_site">Site Filter</string>
+    <string name="image_size">Size Filter :</string>
+    <string name="image_color">Color Filter :</string>
+    <string name="img_type">Type Filter :</string>
+    <string name="img_site">Site Filter :</string>
     <string name="share">Share</string>
 
     <string-array name="color_array">

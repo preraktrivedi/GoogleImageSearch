@@ -1,7 +1,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_main_background" >
 
     <TextView
         android:id="@+id/tvSearchTitle"
@@ -11,7 +12,6 @@
         android:layout_alignParentTop="true"
         android:layout_marginLeft="15dp"
         android:layout_marginTop="15dp"
-        android:text="@string/adv_search_options"
         android:textSize="24sp"
         android:textStyle="bold" />
 
@@ -20,93 +20,122 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tvSearchTitle"
+        android:paddingLeft="15dp"
         android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="10dp"
         android:text="@string/image_size"
-        android:textSize="18sp" />
+        android:textColor="#FFFFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <Spinner
         android:id="@+id/spImageSize"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvSearchTitle"
-        android:layout_marginLeft="15dp"
+        android:layout_alignLeft="@id/tvImgSizeLbl"
+        android:layout_below="@id/tvImgSizeLbl"
         android:layout_marginRight="20dp"
-        android:layout_toRightOf="@+id/tvImgSizeLbl"
+        android:layout_marginTop="10dp"
+        android:background="#78FFFFFF"
         android:entries="@array/size_array"
+        android:padding="10dp"
+        android:paddingRight="40dp"
         android:prompt="@string/size_prompt" />
 
     <TextView
         android:id="@+id/tvImgColorLbl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvImgSizeLbl"
+        android:layout_alignLeft="@id/tvImgSizeLbl"
+        android:layout_below="@+id/spImageSize"
         android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="20dp"
         android:text="@string/image_color"
-        android:textSize="18sp" />
+        android:textColor="#FFFFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <Spinner
         android:id="@+id/spImageColor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvImgSizeLbl"
-        android:layout_marginLeft="15dp"
+        android:layout_alignLeft="@id/tvImgSizeLbl"
+        android:layout_below="@id/tvImgColorLbl"
         android:layout_marginRight="20dp"
-        android:layout_toRightOf="@+id/tvImgColorLbl"
+        android:layout_marginTop="10dp"
+        android:background="#78FFFFFF"
         android:entries="@array/color_array"
+        android:padding="10dp"
+        android:paddingRight="40dp"
         android:prompt="@string/color_prompt" />
 
     <TextView
         android:id="@+id/tvImgTypeLbl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvImgColorLbl"
+        android:layout_alignLeft="@id/tvImgSizeLbl"
+        android:layout_below="@+id/spImageColor"
         android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="20dp"
         android:text="@string/img_type"
-        android:textSize="18sp" />
+        android:textColor="#FFFFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <Spinner
         android:id="@+id/spImageType"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvImgColorLbl"
-        android:layout_marginLeft="15dp"
+        android:layout_alignLeft="@id/tvImgSizeLbl"
+        android:layout_below="@id/tvImgTypeLbl"
         android:layout_marginRight="20dp"
-        android:layout_toRightOf="@+id/tvImgTypeLbl"
+        android:layout_marginTop="10dp"
+        android:background="#78FFFFFF"
         android:entries="@array/type_array"
+        android:padding="10dp"
+        android:paddingRight="40dp"
         android:prompt="@string/type_prompt" />
 
     <TextView
         android:id="@+id/tvImgSiteLbl"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvImgTypeLbl"
+        android:layout_alignLeft="@id/tvImgSizeLbl"
+        android:layout_below="@+id/spImageType"
         android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="20dp"
         android:text="@string/img_site"
-        android:textSize="18sp" />
+        android:textColor="#FFFFFFFF"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/etSiteFilter"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/tvImgSiteLbl"
-        android:layout_below="@+id/tvImgTypeLbl"
-        android:layout_marginLeft="15dp"
+        android:layout_alignLeft="@id/tvImgSizeLbl"
+        android:layout_below="@+id/tvImgSiteLbl"
         android:layout_marginRight="20dp"
-        android:layout_toRightOf="@+id/tvImgSiteLbl"
-        android:hint="@string/site_filter" />
+        android:layout_marginTop="10dp"
+        android:background="#78FFFFFF"
+        android:hint="@string/site_filter"
+        android:padding="10dp"
+        android:paddingRight="40dp"
+        android:textColor="#FFFFFFFF"
+        android:textColorHint="#FFFFFFFF" />
 
     <Button
         android:id="@+id/btnSave"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tvImgSiteLbl"
-        android:layout_centerHorizontal="true"
-        android:layout_marginLeft="15dp"
-        android:layout_marginTop="15dp"
-        android:text="@string/save" />
+        android:layout_below="@+id/etSiteFilter"
+        android:layout_marginLeft="35dp"
+        android:layout_marginRight="35dp"
+        android:layout_marginTop="35dp"
+        android:background="@drawable/button_selector"
+        android:text="@string/save"
+        android:textColor="#FFFFFFFF"
+        android:textSize="16sp"
+        android:textStyle="bold" />
 
 </RelativeLayout>

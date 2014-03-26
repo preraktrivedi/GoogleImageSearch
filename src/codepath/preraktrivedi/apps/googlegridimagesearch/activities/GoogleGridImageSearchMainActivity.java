@@ -29,10 +29,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SearchView;
-import android.widget.SearchView.OnQueryTextListener;
 import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
-import android.widget.Toast;
 import codepath.preraktrivedi.apps.googlegridimagesearch.R;
 import codepath.preraktrivedi.apps.googlegridimagesearch.adapters.ImageResultArrayAdapter;
 import codepath.preraktrivedi.apps.googlegridimagesearch.datamodel.ImageResult;
@@ -60,7 +58,6 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 	private ImageResultArrayAdapter imageAdapter;
 	private SearchFilters searchFilters;
 	private ImageSearchAppData appData;
-	//	private static int REQUEST_CODE = 1, RESULT_CODE = 1;
 	private static final String AMPERSAND = "&", EQUALS = "=", QUESTIONMARK = "?", QUERY = "q",
 			TYPE = "imgtype", SITE = "as_sitesearch", COLOR = "imgcolor",
 			SIZE = "imgsz", RSSIZE = "rsz", START = "start", VERSION = "v",
@@ -174,6 +171,8 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 			String query = searchFilters.getSearchQuery();
 			if (!TextUtils.isEmpty(query)) {
 				performSearch(query);
+			} else {
+				LayoutUtils.showToast(mContext, "Please enter the query to search");
 			}
 			return true;
 		case R.id.action_filters:
@@ -210,6 +209,8 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 			return;
 		}
 		imageResults.clear();
+		imageAdapter.clear();
+		imageAdapter.notifyDataSetInvalidated();
 		searchFilters.setSearchQuery(query);
 		tvSearch.setText("Current Search : " + query);
 		searchForImages(0);
@@ -260,7 +261,7 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 
 		if (!sIsSearchAlreadyDone) {
 			ivNotFound.setVisibility(View.INVISIBLE);
-			tvNotFoundText.setVisibility(View.INVISIBLE);
+			tvNotFoundText.setVisibility(View.GONE);
 		} else {
 			ivNotFound.setVisibility(View.VISIBLE);
 			tvNotFoundText.setVisibility(View.VISIBLE);
@@ -308,6 +309,8 @@ public class GoogleGridImageSearchMainActivity extends Activity {
 	}
 
 	private void loadMoreResults(int page) {
-		searchForImages(page);
+		if (page < 9) {
+			searchForImages(page);
+		}
 	}
 }

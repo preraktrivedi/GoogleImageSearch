@@ -1,7 +1,9 @@
 package codepath.preraktrivedi.apps.googlegridimagesearch.activities;
 
-import static codepath.preraktrivedi.apps.googlegridimagesearch.utils.ImageSearchUtils.*;
+import static codepath.preraktrivedi.apps.googlegridimagesearch.utils.ImageSearchUtils.getItemPositionInSpinner;
+import static codepath.preraktrivedi.apps.googlegridimagesearch.utils.ImageSearchUtils.validateFilterInput;
 import android.app.Activity;
+import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
@@ -13,17 +15,19 @@ import android.view.View.OnClickListener;
 import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ShareActionProvider;
 import android.widget.Spinner;
+import android.widget.Toast;
 import codepath.preraktrivedi.apps.googlegridimagesearch.R;
 import codepath.preraktrivedi.apps.googlegridimagesearch.datamodel.ImageSearchAppData;
 import codepath.preraktrivedi.apps.googlegridimagesearch.datamodel.SearchFilters;
+import codepath.preraktrivedi.apps.googlegridimagesearch.utils.LayoutUtils;
 
 public class SearchFiltersActivity extends Activity {
 
 	private Spinner spImageSize, spImageColor, spImageType;
 	private EditText etSiteFilter;
 	private Button btnSave;
+	private Context mContext;
 	private ImageSearchAppData appData;
 	private SearchFilters searchFilters;
 	public static final String SEARCH_FILTERS = "SearchFilters";
@@ -33,11 +37,12 @@ public class SearchFiltersActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		appData = ImageSearchAppData.getInstance();
+		mContext = this;
 		searchFilters = appData.getCurrentSearchFilters();
 		setContentView(R.layout.activity_search_filters);
 		initializeUi();
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.search_filters, menu);
@@ -50,8 +55,19 @@ public class SearchFiltersActivity extends Activity {
 		case android.R.id.home:
 			this.finish();
 			return true;
+		case R.id.action_refresh:
+			refreshFilters();
+			Toast.makeText(mContext, "Refreshed filters to default", Toast.LENGTH_SHORT).show();
+			return true;
 		}
 		return super.onOptionsItemSelected(item);
+	}
+
+	private void refreshFilters() {
+		spImageSize.setSelection(0);
+		spImageColor.setSelection(0);
+		spImageType.setSelection(0);
+		etSiteFilter.setText("");
 	}
 
 	private void initializeUi() {
